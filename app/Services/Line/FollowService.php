@@ -1,12 +1,8 @@
 <?php
 
 namespace App\Services\Line;
-
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB; // dbファサード
-use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
-use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
-use LINE\LINEBot\MessageBuilder\RawMessageBuilder;
+use Illuminate\Support\Facades\DB;
+use App\Services\Line\PostbackService;
 
 class FollowService
 {
@@ -14,27 +10,25 @@ class FollowService
      * フォロー時に以下の処理を行います
      * 画像出力 + テキスト出力 + usersテーブルにlineIdを追加
      */
+
     public function followUser($bot, $replyToken, $event)
     {
         $lineId = $event['source']['userId'] ?? null;
-        if ($lineId && $replyToken) {
-            $bot->linkRichMenu($lineId, 'richmenu-fa43e2d8bde1e1d9b6849440fae36b9a');
-            $isLineId = DB::table('users')
-                ->where('line_id', $lineId)->exists();
-            if (!$isLineId) {
-                DB::table('users')
-                    ->insert(values: ['line_id' => $lineId]);
-            }
-            // テキストを出力
-            $replyMessage = new TextMessageBuilder("友達登録ありがとうございます");
-            // 画像を出力
-            $flexMessageJson = config('json.follow');
-            $flexMessageJsonDecode = json_decode($flexMessageJson, true);
-            $flexMessage = new RawMessageBuilder($flexMessageJsonDecode);
-            $multiMessage = new MultiMessageBuilder();
-            $multiMessage->add($replyMessage);
-            $multiMessage->add($flexMessage);
-            $bot->replyMessage($replyToken, $multiMessage);
+        $sendMessage = "友達登録ありがとうございます";
+        $PostbackService = new PostbackService();
+        $PostbackService->restRichmenu($bot, $lineId); // リッチメニュー変更
+        $this->insertLineid($lineId); // lineidを挿入
+        $PostbackService->pushFlexMessage($bot, $replyToken, $sendMessage); // フレックスメッセージ出力
+    }
+
+    private function insertLineid($lineId)
+    {
+        // lineidを挿入
+        $isLineId = DB::table('users')
+            ->where('line_id', $lineId)->exists();
+        if (!$isLineId) {
+            DB::table('users')
+                ->insert(values: ['line_id' => $lineId]);
         }
     }
 }
