@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/generate-image', [ImageController::class, 'generateImage'])->name('generate.image');
+Route::get('/storage/images/sketch/{filename}', function ($filename) {
+    $path = storage_path("app/public/images/sketch/{$filename}");
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+});
