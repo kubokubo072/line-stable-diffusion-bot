@@ -1,15 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\Line;
-
-use Illuminate\Http\Request;
 use LINE\LINEBot;
+use Illuminate\Http\Request;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use App\Services\Line\FollowService;
 use App\Services\Line\PostbackService;
-use App\Services\Line\LineMessageService;
+use App\Services\Line\MessagesService;
+use App\Services\Line\ImageService;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Log;
 
 class LineMessageController extends Controller
 {
@@ -30,10 +29,13 @@ class LineMessageController extends Controller
                 new FollowService()->followUser($bot, $replyToken, $event);
             // メッセージ受信時の処理
             } elseif ($eventType === 'message' && isset($event['message']['type']) && $event['message']['type'] === 'text') {
-                new LineMessageService()->getMessages($bot, $replyToken, $event);
+                new MessagesService()->getMessages($bot, $replyToken, $event);
             // リッチメニューの説明書クリック時
             } else if ($eventType === 'postback') {
                 new PostbackService()->manual($bot, $replyToken, $event);
+            } elseif ($eventType === 'message' && isset($event['message']['type']) && $event['message']['type'] === 'image') {
+                // 画像を取得 ここから作成
+                new ImageService()->getImage($bot, $replyToken, $event);
             }
         }
     }
