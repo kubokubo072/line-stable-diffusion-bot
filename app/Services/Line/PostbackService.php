@@ -6,12 +6,13 @@ use LINE\LINEBot\MessageBuilder\RawMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use Illuminate\Support\Facades\DB;
 
+/*
+    * リッチメニューの説明書クリック時 + 機能フラグリセット時に呼ばれます
+    * リッチメニューをリセット + フラグをリセット + 画像/テキストを出力
+*/
+
 class PostbackService
 {
-    /*
-     * リッチメニューの説明書クリック時 + 機能フラグリセット時に呼ばれます
-     * リッチメニューをリセット + フラグをリセット + 画像/テキストを出力
-     */
     public function manual($bot, $replyToken, $event)
     {
         $sendMessage = "希望の機能を選択して画像を生成してください";
@@ -24,6 +25,8 @@ class PostbackService
     public function restRichmenu($bot, $lineId)
     {
         $initialRichmenuUrl = config('main.richmenu.initial');
+        $bot->unlinkRichMenu($lineId);
+        sleep(1);
         $bot->linkRichMenu($lineId, $initialRichmenuUrl);
     }
 

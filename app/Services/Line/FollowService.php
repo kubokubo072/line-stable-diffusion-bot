@@ -16,7 +16,10 @@ class FollowService
         $lineId = $event['source']['userId'] ?? null;
         $sendMessage = "友達登録ありがとうございます";
         $PostbackService = new PostbackService();
-        $PostbackService->restRichmenu($bot, $lineId); // リッチメニュー変更
+
+        $bot->unlinkRichMenu($lineId);
+        sleep(1);
+        $bot->linkRichMenu($lineId, config('main.richmenu.initial')); // 新しいリッチメニューを適用
         $this->insertLineid($lineId); // lineidを挿入
         $PostbackService->pushFlexMessage($bot, $replyToken, $sendMessage); // フレックスメッセージ出力
     }
