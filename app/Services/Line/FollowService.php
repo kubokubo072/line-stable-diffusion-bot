@@ -16,22 +16,29 @@ class FollowService
         $lineId = $event['source']['userId'] ?? null;
         $sendMessage = "友達登録ありがとうございます";
         $PostbackService = new PostbackService();
-
+        // ユーザーのニックネームを取得
+        $response = $bot->getProfile($lineId);
+        $profile = $response->getJSONDecodedBody();
+        $lineNickname = $profile['displayName'] ?? null;
+        // リッチメニュー変更
         $bot->unlinkRichMenu($lineId);
         sleep(1);
         $bot->linkRichMenu($lineId, config('main.richmenu.initial')); // 新しいリッチメニューを適用
-        $this->insertLineid($lineId); // lineidを挿入
+        $this->insertLineid($lineId, $lineNickname); // lineidを挿入
         $PostbackService->pushFlexMessage($bot, $replyToken, $sendMessage); // フレックスメッセージ出力
     }
 
-    private function insertLineid($lineId)
+    private function insertLineid($lineId, $lineNickname)
     {
         // lineidを挿入
         $isLineId = DB::table('users')
             ->where('line_id', $lineId)->exists();
         if (!$isLineId) {
             DB::table('users')
-                ->insert(values: ['line_id' => $lineId]);
+            ->insert([
+                'line_id' => $lineId,
+                'line_nickname' => $lineNickname,
+            ]);
         }
     }
 }
