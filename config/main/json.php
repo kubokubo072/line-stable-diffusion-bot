@@ -1,11 +1,7 @@
 <?php
-
 /*
     フレックスメッセージで使用するjsonを管理します
-    jsonデコード後にflexビルダーで使用できます
-    $result = json_decode($json, true);
 */
-
 return [
     'manual' => '{
         "type": "flex",
@@ -37,7 +33,7 @@ return [
             }
         ]}
     }',
-    'jsonTemplate' => '{
+    'template' => '{
         "type": "flex",
         "altText": "this is a flex message",
         "contents": ここにjsonを丸ごと記述してください(シングルクウォートなどは「\'」エスケープが必要です)
