@@ -26,16 +26,24 @@ class LineMessageController extends Controller
             $replyToken = $event['replyToken'] ?? null;
             // 友達登録時
             if ($eventType === 'follow') {
-                new FollowService()->followUser($bot, $replyToken, $event);
+                $FollowService = new FollowService();
+                $FollowService->followUser($bot, $replyToken, $event);
+                // new FollowService()->followUser($bot, $replyToken, $event);
             // メッセージ受信時の処理
             } elseif ($eventType === 'message' && isset($event['message']['type']) && $event['message']['type'] === 'text') {
-                new MessagesService()->getMessages($bot, $replyToken, $event);
+                $MessagesService = new MessagesService();
+                $MessagesService->getMessages($bot, $replyToken, $event);
+                // new MessagesService()->getMessages($bot, $replyToken, $event);
             // リッチメニューの説明書クリック時
             } else if ($eventType === 'postback') {
-                new PostbackService()->manual($bot, $replyToken, $event);
+                $PostbackService = new PostbackService();
+                $PostbackService->manual($bot, $replyToken, $event);
+                // new PostbackService()->manual($bot, $replyToken, $event);
             } elseif ($eventType === 'message' && isset($event['message']['type']) && $event['message']['type'] === 'image') {
                 // 画像を取得 ここから作成
-                new ImageService()->getImage($bot, $replyToken, $event);
+                $ImageService = new ImageService();
+                $ImageService->getImage($bot, $replyToken, $event);
+                // new ImageService()->getImage($bot, $replyToken, $event);
             }
         }
     }
