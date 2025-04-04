@@ -54,7 +54,8 @@ class MessagesService
 
         // 機能が選択されていない場合はmanualを出力
         } else {
-            new PostbackService()->manual($bot, $replyToken, $event);
+            $PostbackService = new PostbackService();
+            $PostbackService->manual($bot, $replyToken, $event);
         }
     }
 
