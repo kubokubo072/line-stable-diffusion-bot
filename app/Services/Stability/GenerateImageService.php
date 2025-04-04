@@ -42,7 +42,10 @@ class GenerateImageService
         // 保存した画像のURLを返す
         $imageUrl = asset($imagePath);
         $replaceImageUrl = str_replace("http://", "https://", $imageUrl);
-        $replaceImageUrl = str_replace('/var/www/html/public/', '/', $replaceImageUrl);
+        // 本番の場合
+        $replaceImageUrl = str_replace("home/lfwrncjx/line-stable-diffusion-bot/public/", "", $imageUrl);
+        // ローカル
+        // $replaceImageUrl = str_replace('/var/www/html/public/', '/', $replaceImageUrl);
         return $replaceImageUrl;
     }
 
